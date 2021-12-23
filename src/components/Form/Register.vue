@@ -1,4 +1,7 @@
-<template>
+  <template>
+
+    <spinner v-if="loading"></spinner>
+
   <div class="container">
     <h1 class="text-center">Register</h1>
     <form @submit.prevent="handleSubmit">
@@ -60,6 +63,7 @@
 </template>
 
 <script>
+import {mapGetters} from 'vuex';
 import axios from "axios";
 
 export default {
@@ -72,26 +76,33 @@ export default {
         password_confirm: "",
       },
       formError: [],
-    };
+      loading:false
+    }
+  },
+  computed: {
+    ...mapGetters(['user'])
   },
   methods: {
     async handleSubmit() {
+      this.loading = true;
       try {
-
-        const response = await axios.post("register", this.data);
-        console.log(response.data);
-        this.$router.push({name:'login'});
-
+        const response = await axios.post("api/auth/register", this.data);
+        this.$store.dispatch('flash',{message:"Account created successfuly",type:'success'});
+        this.$router.push({ name: "login" });
+        console.log(response)
+        this.loading = false;
+        
       } catch (error) {
         this.formError = error.response.data.form_validation;
+        this.loading = false;
       }
     },
     displayError(field) {
-      if(this.formError[field]) {
+      if (this.formError[field]) {
         return this.formError[field][0];
       }
       return;
-    },
+    }
   },
 };
 </script>
@@ -111,4 +122,5 @@ label {
 input {
   border: 3px solid;
 }
+
 </style>

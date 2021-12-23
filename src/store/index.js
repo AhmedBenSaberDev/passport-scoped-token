@@ -1,10 +1,11 @@
 import { createStore } from 'vuex';
 import createPersistedState from "vuex-persistedstate";
+import Flash from './flash.js';
 
 export default createStore({
   state(){
     return{
-      user:null
+      user:null,
     }
   },
   getters: {
@@ -21,6 +22,9 @@ export default createStore({
     user(context,user){
       context.commit('user',user);
     }
+  },
+  modules: {
+    Flash
   },
   plugins: [createPersistedState()],
 })

@@ -3,8 +3,12 @@
 
     <nav class="navbar navbar-inverse" role="navigation">
 
-        <div v-if="user" class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+       <ul class="nav navbar-nav navbar-left">
+            <li> <router-link :to="{ name:'home' }">Home</router-link> </li>
+          </ul>
 
+        <div v-if="user" class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+         
           <ul class="nav navbar-nav navbar-right">
              <li> <a @click.prevent="logout" href='#'>Logout</a> </li>
           </ul>
@@ -36,7 +40,7 @@ export default {
     async logout()
     {
       try {
-        const response = await axios.get('logout');
+        const response = await axios.get('api/auth/logout');
         console.log(response);
         localStorage.removeItem('token');
         this.$store.dispatch('user',null);
@@ -56,5 +60,8 @@ nav {
 }
 .navbar-right{
     padding-right:50px !important;
+}
+a{
+  font-size: 18px;
 }
 </style>

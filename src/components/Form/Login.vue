@@ -1,4 +1,5 @@
 <template>
+  <spinner v-if="loading" ></spinner>
   <div class="container">
     <h1 class="text-center">Login</h1>
     <form @submit.prevent="handleSubmit">
@@ -32,7 +33,9 @@
           {{invalidCredentials}} </span>
       </div>
 
+
       <button type="submit" class="btn btn-default">Submit</button>
+      <router-link class="forgot" :to='{ name:"forgot"}'>forgot password ?</router-link>
     </form>
   </div>
 </template>
@@ -40,6 +43,7 @@
 <script>
 import axios from "axios";
 import SecureLS from "secure-ls";
+import {mapGetters} from 'vuex';
 
 export default {
   data() {
@@ -49,18 +53,25 @@ export default {
         password: "",
       },
        formError:[],
-       invalidCredentials:null
+       invalidCredentials:null,
+       loading:false
     };
+  },
+  computed: {
+    ...mapGetters(['user'])
   },
   methods: {
     async handleSubmit() {
+      this.loading = true;
       try {
-        const response = await axios.post("login", this.data);
+        const response = await axios.post("api/auth/login", this.data);
 
         let ls = new SecureLS();
         ls.set('token',response.data.token);
 
         this.$store.dispatch('user',response.data.user);
+
+        this.loading = false;
         this.$router.push({name:'home'});
         
       } catch (error) {
@@ -69,6 +80,7 @@ export default {
         }else{
             this.invalidCredentials = 'Invalid email or Password';
         }
+        this.loading = false;
       }
     },
     displayError(field) {
@@ -82,7 +94,7 @@ export default {
 };
 </script>
 
-<style scoped >
+<style >
 .container {
   margin: 5% auto;
   padding: 3%;
@@ -96,5 +108,10 @@ label {
 }
 input {
   border: 3px solid;
+}
+.forgot{
+  float: right;
+  color: whitesmoke;
+  font-size: 18px;
 }
 </style>
